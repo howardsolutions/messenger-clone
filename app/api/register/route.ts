@@ -34,5 +34,4 @@ export async function POST(request: Request) {
         console.error(err, "REGISTRATION ERROR")
         return new NextResponse("Internal Error", { status: 500 })
     }
-
 }
