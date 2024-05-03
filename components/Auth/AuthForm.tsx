@@ -6,6 +6,9 @@ import Input from '../Input';
 import Button from '../Button';
 import AuthSocialButton from './AuthSocialButton';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
 
 type Variant = 'LOGIN' | 'REGISTER';
 
@@ -21,6 +24,7 @@ function AuthForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
@@ -30,16 +34,36 @@ function AuthForm() {
     },
   });
 
-  function onSubmit() {
+  function onSubmit(data: any) {
     setIsLoading(true);
 
-    if (variant === 'REGISTER') {
-      // Call Axios Register
-    }
+    if (variant === 'REGISTER') handleRegister(data);
 
     if (variant === 'LOGIN') {
       // Next Auth Signin
+      signIn('credentials', {
+        ...data,
+        redirect: false,
+      })
+        .then((callback) => {
+          if (callback?.error) {
+            toast.error('Invalid credentials');
+          }
+
+          if (callback?.ok) {
+            toast.success('Logged in!');
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
+  }
+
+  function handleRegister(data: any) {
+    axios
+      .post(`/api/register`, data)
+      .then(() => toast.success('User created successfully'))
+      .catch((err) => toast.error(err.response?.data || 'Something went wrong'))
+      .finally(() => setIsLoading(false));
   }
 
   function signInWith(action: string) {
@@ -47,6 +71,11 @@ function AuthForm() {
 
     // NextAuth Social Signin
   }
+
+  const areInputsEmpty =
+    watch('email').length === 0 ||
+    watch('password').length === 0 ||
+    (variant === 'REGISTER' && watch('name').length === 0);
 
   return (
     <div
@@ -82,7 +111,11 @@ function AuthForm() {
             errors={errors}
             disabled={isLoading}
           />
-          <Button type='submit' disabled={isLoading} fullWidth>
+          <Button
+            type='submit'
+            disabled={isLoading || areInputsEmpty}
+            fullWidth
+          >
             {variant === 'LOGIN' ? 'Sign In' : 'Register'}
           </Button>
         </form>
