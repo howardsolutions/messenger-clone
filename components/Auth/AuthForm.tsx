@@ -50,7 +50,7 @@ function AuthForm() {
             toast.error('Invalid credentials');
           }
 
-          if (callback?.ok) {
+          if (callback?.ok || !callback?.error) {
             toast.success('Logged in!');
           }
         })
@@ -70,6 +70,9 @@ function AuthForm() {
     setIsLoading(true);
 
     // NextAuth Social Signin
+    signIn(action, {
+      redirect: false,
+    });
   }
 
   const areInputsEmpty =
@@ -154,17 +157,17 @@ function AuthForm() {
                 Or continue with
               </span>
             </div>
+          </div>
 
-            <div className='mt-6 flex gap-2'>
-              <AuthSocialButton
-                Icon={BsGithub}
-                onClick={() => signInWith('github')}
-              />
-              <AuthSocialButton
-                Icon={BsGoogle}
-                onClick={() => signInWith('google')}
-              />
-            </div>
+          <div className='mt-6 flex gap-2'>
+            <AuthSocialButton
+              Icon={BsGithub}
+              onClick={() => signInWith('github')}
+            />
+            <AuthSocialButton
+              Icon={BsGoogle}
+              onClick={() => signInWith('google')}
+            />
           </div>
         </div>
 
