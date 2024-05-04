@@ -4,6 +4,7 @@ import prismaClient from '@/libs/prismadb';
 export default async function getCurrentUser() {
     try {
         const session = await getSession();
+
         if (!session?.user?.email) {
             return null;
         }
@@ -16,7 +17,7 @@ export default async function getCurrentUser() {
 
         if (!currentUser) return null;
 
-        return currentUser
+        return currentUser;
     } catch (err: any) {
         return null;
     }
