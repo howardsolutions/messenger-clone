@@ -1,13 +1,16 @@
 import { DesktopSidebar, MobileFooter } from '@/components/Layout';
+import { getCurrentUser } from '../actions';
 
-export default function UsersLayout({
+export default async function UsersLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const currentUser = await getCurrentUser();
+
   return (
     <div className='h-full'>
-      <DesktopSidebar />
+      <DesktopSidebar currentUser={currentUser!} />
       <MobileFooter />
       <main className='lg:pl-20 h-full'>{children}</main>
     </div>

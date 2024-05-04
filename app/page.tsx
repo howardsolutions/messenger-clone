@@ -1,7 +1,21 @@
+'use client';
+
 import { AuthForm } from '@/components/Auth';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const session = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session?.status === 'authenticated') {
+      router.push('/users');
+    }
+  }, [session?.status, router]);
+
   return (
     <div
       className='

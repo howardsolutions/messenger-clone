@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { User } from '@prisma/client';
 import { useRoutes } from '@/hooks';
 import DesktopItem from './DesktopItem';
+import Avatar from '../Avatar';
 
 interface DesktopSidebarProps {
   currentUser: User;
 }
 
-const DesktopSidebar: React.FC = () => {
+const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ currentUser }) => {
   const routes = useRoutes();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +64,7 @@ const DesktopSidebar: React.FC = () => {
             ))}
           </ul>
         </nav>
-        {/* <nav
+        <nav
           className='
             mt-4
             flex
@@ -82,7 +83,7 @@ const DesktopSidebar: React.FC = () => {
           >
             <Avatar user={currentUser} />
           </div>
-        </nav> */}
+        </nav>
       </div>
     </>
   );
