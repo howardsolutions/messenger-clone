@@ -12,7 +12,7 @@ const useRoutes = () => {
     const pathname = usePathname();
     const { conversationId } = useConversation();
 
-    const routes = () => [
+    const routes = [
         {
             label: 'Chat',
             href: '/conversations',
