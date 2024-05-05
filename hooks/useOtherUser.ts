@@ -9,7 +9,7 @@ function useOtherUser(conversation: FullConversationType | { users: User[] }) {
 
     const otherUser = conversation.users.filter(user => user.email !== currentUserEmail);
 
-    return otherUser;
+    return otherUser[0];
 }
 
 export default useOtherUser

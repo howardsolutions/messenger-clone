@@ -1,34 +1,71 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import { FullConversationType } from '@/types';
+import { useOtherUser } from '@/hooks';
+import { Message } from '@prisma/client';
+import AvatarGroup from '../AvatarGroup';
+import Avatar from '../Avatar';
+import { format } from 'date-fns';
 
 interface ConversationBoxProps {
-  data: FullConversationType;
+  conversation: FullConversationType;
   selected?: boolean;
 }
 
+function getLastMessageText(lastMessage: Message) {
+  if (lastMessage?.image) {
+    return 'Sent an Image';
+  }
+
+  if (lastMessage?.body) {
+    return lastMessage.body;
+  }
+
+  return 'Started a Conversation';
+}
+
+function hasSeenLastMessage(
+  lastMessage: any,
+  userEmail: string | null | undefined
+): boolean {
+  if (!lastMessage) return false;
+
+  const seenArr = lastMessage.seen || [];
+
+  if (!userEmail) return false;
+
+  return seenArr.includes(userEmail);
+}
+
 const ConversationBox: React.FC<ConversationBoxProps> = ({
-  data,
+  conversation,
   selected,
 }) => {
   const session = useSession();
   const router = useRouter();
 
-  const lastMessage = useMemo(() => {
-    const messages = data.messages || [];
-
-    return messages[messages.length - 1];
-  }, [data.messages]);
+  const otherUser = useOtherUser(conversation);
 
   const userEmail = session.data?.user?.email;
 
+  const lastMessage =
+    (conversation.messages &&
+      conversation.messages[conversation.messages.length - 1]) ||
+    [];
+
+  const lastMessageText = getLastMessageText(lastMessage);
+
+  const currentUserHasSeenLastMessage = hasSeenLastMessage(
+    lastMessage,
+    userEmail
+  );
+
   return (
     <div
-      onClick={() => router.push(`/conversations/${data.id}`)}
+      onClick={() => router.push(`/conversations/${conversation.id}`)}
       className={clsx(
         `
         w-full,
@@ -45,11 +82,11 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
         selected ? 'bg-neutral-100' : 'bg-white'
       )}
     >
-      {/* {data.isGroup ? (
-        <AvatarGroup users={data.users} />
+      {conversation.isGroup ? (
+        <AvatarGroup users={conversation.users} />
       ) : (
         <Avatar user={otherUser} />
-      )} */}
+      )}
       <div className='min-w-0 flex-1'>
         <div className='focus:outline-none'>
           <div
@@ -67,7 +104,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
                 text-gray-900
               '
             >
-              {/* {data.name || otherUser.name} */}
+              {conversation.name || otherUser.name}
             </p>
             {lastMessage?.createdAt && (
               <p
@@ -77,7 +114,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
                   font-light
                 '
               >
-                {/* {format(new Date(lastMessage.createdAt), 'p')} */}
+                {format(new Date(lastMessage.createdAt), 'p')}
               </p>
             )}
           </div>
@@ -87,10 +124,10 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
               truncate
               text-sm
             `
-              //   hasSeen ? 'text-gray-500' : 'text-black font-medium'
+              // hasSeen ? 'text-gray-500' : 'text-black font-medium'
             )}
           >
-            {/* {lastMessageText} */}
+            {lastMessageText}
           </p>
         </div>
       </div>
