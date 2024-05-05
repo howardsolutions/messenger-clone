@@ -1,8 +1,10 @@
 
+import { Conversation } from "@prisma/client";
 import getCurrentUser from "./getCurrentUser";
 import prismaClient from '@/libs/prismadb';
+import { FullConversationType } from "@/types";
 
-const getConversations = async () => {
+async function getConversations(): Promise<FullConversationType[] | []> {
     const currentUser = await getCurrentUser();
 
     if (!currentUser?.id) {
