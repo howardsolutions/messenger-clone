@@ -17,7 +17,7 @@ export default async function ConversationsLayout({
       <DesktopSidebar currentUser={currentUser!} />
       <MobileFooter />
       <main className='lg:pl-20 h-full'>
-        <ConversationList initialItems={conversations} users={users} />
+        <ConversationList initialConversations={conversations} users={users} />
         {children}
       </main>
     </div>

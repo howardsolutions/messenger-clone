@@ -57,6 +57,7 @@ model Conversation {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt     DateTime @default(now())
   lastMessageAt DateTime @default(now())
+  // for group conversation
   name          String?
   isGroup       Boolean?
 
@@ -80,5 +81,6 @@ model Message {
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   senderId String @db.ObjectId
+  // author of the message
   sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }

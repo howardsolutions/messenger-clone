@@ -3,29 +3,29 @@
 import axios from 'axios';
 import { User } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import Avatar from '../Avatar';
 
 interface UserBoxProps {
-  data: User;
+  user: User;
 }
 
-const UserBox: React.FC<UserBoxProps> = ({ data }) => {
+const UserBox: React.FC<UserBoxProps> = ({ user }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     setIsLoading(true);
 
     axios
       .post('/api/conversations', {
-        userId: data.id,
+        userId: user.id,
       })
       .then((data) => {
         router.push(`/conversations/${data.data.id}`);
       })
       .finally(() => setIsLoading(false));
-  }, [data, router]);
+  };
 
   return (
     <>
@@ -46,7 +46,7 @@ const UserBox: React.FC<UserBoxProps> = ({ data }) => {
           cursor-pointer
         '
       >
-        <Avatar user={data} />
+        <Avatar user={user} />
         <div className='min-w-0 flex-1'>
           <div className='focus:outline-none'>
             <div
@@ -64,7 +64,7 @@ const UserBox: React.FC<UserBoxProps> = ({ data }) => {
                   text-gray-900
                 '
               >
-                {data.name}
+                {user.name}
               </p>
             </div>
           </div>
