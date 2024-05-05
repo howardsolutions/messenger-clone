@@ -4,6 +4,7 @@ import { useConversation } from '@/hooks';
 import axios from 'axios';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { HiPaperAirplane, HiPhoto } from 'react-icons/hi2';
+import MessageInput from '../MessageInput';
 // import { CldUploadButton } from 'next-cloudinary';
 
 const ConversationForm = () => {
@@ -61,13 +62,13 @@ const ConversationForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className='flex items-center gap-2 lg:gap-4 w-full'
       >
-        {/* <MessageInput
+        <MessageInput
           id='message'
           register={register}
           errors={errors}
           required
           placeholder='Write a message'
-        /> */}
+        />
         <button
           type='submit'
           className='

@@ -1,7 +1,5 @@
-import React from 'react';
-
 function ConversationBody() {
-  return <div>ConversationBody</div>;
+  return <div className='flex-1 overflow-y-auto'>Body</div>;
 }
 
 export default ConversationBody;

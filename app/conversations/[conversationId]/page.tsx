@@ -1,8 +1,8 @@
 import getConversationById from '@/app/actions/getConversationById';
 import getMessages from '@/app/actions/getMessages';
-import ConversationBody from '@/components/Conversation/Body';
+import ConversationBody from '@/components/Conversation/ConversationBody';
 import ConversationForm from '@/components/Conversation/ConversationForm';
-import ConversationHeader from '@/components/Conversation/Header';
+import ConversationHeader from '@/components/Conversation/ConversationHeader';
 import EmptyState from '@/components/EmptyState';
 
 interface ConversationPageProps {
