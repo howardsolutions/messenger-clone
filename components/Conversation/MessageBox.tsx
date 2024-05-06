@@ -10,14 +10,15 @@ import Avatar from '../Avatar';
 
 interface MessageBoxProps {
   message: FullMessageType;
-  isLast?: boolean;
+  isLastMessage?: boolean;
 }
 
-const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast }) => {
+const MessageBox: React.FC<MessageBoxProps> = ({ message, isLastMessage }) => {
   const session = useSession();
   const [imageModalOpen, setImageModalOpen] = useState(false);
 
   const isOwn = session?.data?.user?.email === message?.sender?.email;
+
   const seenList = (message.seen || [])
     .filter((user) => user.email !== message?.sender?.email)
     .map((user) => user.name)
@@ -72,7 +73,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast }) => {
             <div>{message.body}</div>
           )}
         </div>
-        {isLast && isOwn && seenList.length > 0 && (
+        {isLastMessage && isOwn && seenList.length > 0 && (
           <div
             className='
               text-xs
