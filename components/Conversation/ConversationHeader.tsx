@@ -8,6 +8,8 @@ import { HiChevronLeft, HiEllipsisHorizontal } from 'react-icons/hi2';
 import { useOtherUser } from '@/hooks';
 import AvatarGroup from '../AvatarGroup';
 import Avatar from '../Avatar';
+import ProfileDrawer from '../ProfileDrawer';
+import { getStatusText } from '@/utils';
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -22,21 +24,15 @@ const ConversationHeader: React.FC<HeaderProps> = ({ conversation }) => {
   //   const { members } = useActiveList();
   //   const isActive = members.indexOf(otherUser?.email!) !== -1;
 
-  //   const statusText = useMemo(() => {
-  //     if (conversation.isGroup) {
-  //       return `${conversation.users.length} members`;
-  //     }
-
-  //     return isActive ? 'Active' : 'Offline';
-  //   }, [conversation, isActive]);
+  const statusText = getStatusText(conversation, false);
 
   return (
     <>
-      {/* <ProfileDrawer
-        data={conversation}
+      <ProfileDrawer
+        conversation={conversation}
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-      /> */}
+      />
       <div
         className='
           bg-white
