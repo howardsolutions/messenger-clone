@@ -13,13 +13,13 @@ import { getStatusText } from '@/utils';
 
 // import useActiveList from '@/app/hooks/useActiveList';
 
-interface ProfileDrawerProps {
+type ProfileDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
   conversation: Conversation & {
     users: User[];
   };
-}
+};
 
 const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   isOpen,

@@ -1,13 +1,14 @@
 'use client';
 
-import Modal from '@/app/components/Modal';
-import useConversation from '@/app/hooks/useConversation';
+import { useConversation } from '@/hooks';
 import { Dialog } from '@headlessui/react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { FiAlertTriangle } from 'react-icons/fi';
+import Modal from './Modal';
+import Button from './Button';
 
 interface ConfirmModalProps {
   isOpen?: boolean;
