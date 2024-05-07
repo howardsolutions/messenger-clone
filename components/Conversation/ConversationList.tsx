@@ -10,6 +10,7 @@ import { User } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { FullConversationType } from '@/types';
 import { useConversation } from '@/hooks';
+import GroupChatModal from '../GroupChatModal';
 
 interface ConversationListProps {
   initialConversations: FullConversationType[];
@@ -30,11 +31,11 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
   return (
     <>
-      {/* <GroupChatModal
+      <GroupChatModal
         users={users}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-      /> */}
+      />
       <aside
         className={clsx(
           `
