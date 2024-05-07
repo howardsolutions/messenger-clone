@@ -69,7 +69,7 @@ export async function POST(request: Request) {
             }
         });
 
-        return NextResponse.json(newMessage, { status: 401 })
+        return NextResponse.json(newMessage)
 
     } catch (err: any) {
         console.log(err, "ERR MESSAGES");
