@@ -9,6 +9,7 @@ import { Message } from '@prisma/client';
 import AvatarGroup from '../AvatarGroup';
 import Avatar from '../Avatar';
 import { format } from 'date-fns';
+import { useMemo } from 'react';
 
 interface ConversationBoxProps {
   conversation: FullConversationType;
@@ -25,19 +26,6 @@ function getLastMessageText(lastMessage: Message) {
   }
 
   return 'Started a Conversation';
-}
-
-function hasSeenLastMessage(
-  lastMessage: any,
-  userEmail: string | null | undefined
-): boolean {
-  if (!lastMessage) return false;
-
-  const seenArr = lastMessage.seen || [];
-
-  if (!userEmail) return false;
-
-  return seenArr.includes(userEmail);
 }
 
 const ConversationBox: React.FC<ConversationBoxProps> = ({
@@ -58,10 +46,13 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 
   const lastMessageText = getLastMessageText(lastMessage);
 
-  const currentUserHasSeenLastMessage = hasSeenLastMessage(
-    lastMessage,
-    userEmail
-  );
+  const currentUserHasSeenLastMessage = useMemo(() => {
+    const seenArr = lastMessage.seen || [];
+
+    if (!userEmail) return false;
+
+    return seenArr.findIndex((user) => user.email === userEmail) > -1;
+  }, [userEmail, lastMessage.seen]);
 
   return (
     <div
@@ -123,8 +114,10 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
               `
               truncate
               text-sm
-            `
-              // hasSeen ? 'text-gray-500' : 'text-black font-medium'
+            `,
+              currentUserHasSeenLastMessage
+                ? 'text-gray-500'
+                : 'text-black font-medium'
             )}
           >
             {lastMessageText}
