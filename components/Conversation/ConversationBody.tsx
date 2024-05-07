@@ -6,6 +6,7 @@ import axios from 'axios';
 import { FullMessageType } from '@/types';
 import { useConversation } from '@/hooks';
 import MessageBox from './MessageBox';
+import { pusherClient } from '@/libs/pusher';
 
 interface ConversationBodyProps {
   initialMessages: FullMessageType[];
@@ -19,8 +20,28 @@ const ConversationBody: React.FC<ConversationBodyProps> = ({
 
   const { conversationId } = useConversation();
 
+  // mark last message in the current open conversation status to SEEN
   useEffect(() => {
     axios.post(`/api/conversations/${conversationId}/seen`);
+  }, [conversationId]);
+
+  useEffect(() => {
+    // subscribe to the pusher channel
+    pusherClient.subscribe(conversationId);
+
+    // if receive new message in realtime, scroll to the bottom of the  current conversation
+    bottomRef.current?.scrollIntoView();
+
+    // listen to the event and get the data
+    pusherClient.bind('message:new', messageHandler);
+
+    function messageHandler() {}
+
+    // unsubscribe when component unmount, otherwise it will create overflow
+    return () => {
+      pusherClient.unsubscribe(conversationId);
+      pusherClient.unbind('message:new', messageHandler);
+    };
   }, [conversationId]);
 
   return (
