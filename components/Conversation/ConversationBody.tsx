@@ -7,6 +7,7 @@ import { FullMessageType } from '@/types';
 import { useConversation } from '@/hooks';
 import MessageBox from './MessageBox';
 import { pusherClient } from '@/libs/pusher';
+import { find } from 'lodash';
 
 interface ConversationBodyProps {
   initialMessages: FullMessageType[];
@@ -33,14 +34,43 @@ const ConversationBody: React.FC<ConversationBodyProps> = ({
     bottomRef.current?.scrollIntoView();
 
     // listen to the event and get the data
-    pusherClient.bind('message:new', messageHandler);
+    pusherClient.bind('message:new', newMessageHandler);
 
-    function messageHandler() {}
+    // listen to message update status to seen
+    pusherClient.bind('message:update', updateMessageHandler);
+
+    function newMessageHandler(newMessage: FullMessageType) {
+      // mark the new message (lastMessage) as seen
+      axios.post(`/api/conversations/${conversationId}/seen`);
+
+      setMessages((currentListOfMessage) => {
+        if (find(currentListOfMessage, { id: newMessage.id })) {
+          return currentListOfMessage;
+        }
+
+        return [...currentListOfMessage, newMessage];
+      });
+
+      bottomRef.current?.scrollIntoView();
+    }
+
+    function updateMessageHandler(updatedMessage: FullMessageType) {
+      setMessages((currentListOfMessage) =>
+        currentListOfMessage.map((currentMessage) => {
+          if (currentMessage.id === updatedMessage.id) {
+            return updatedMessage;
+          }
+
+          return currentMessage;
+        })
+      );
+    }
 
     // unsubscribe when component unmount, otherwise it will create overflow
     return () => {
       pusherClient.unsubscribe(conversationId);
-      pusherClient.unbind('message:new', messageHandler);
+      pusherClient.unbind('message:new', newMessageHandler);
+      pusherClient.unbind('message:update', updateMessageHandler);
     };
   }, [conversationId]);
 

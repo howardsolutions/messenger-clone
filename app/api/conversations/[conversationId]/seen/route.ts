@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from '@/app/actions';
 import prismaClient from '@/libs/prismadb';
+import { pusherServer } from "@/libs/pusher";
 
 type TParams = {
     conversationId?: string;
@@ -38,8 +39,12 @@ export async function POST(request: Request, { params }: { params: TParams }) {
 
         if (!lastMessage) return NextResponse.json(conversation);
 
-        // Update seen  status of last message
+        // currentUser already seen the last message => there is no need to mark as `seen` anymore
+        if (lastMessage.seenIds.indexOf(currentUser.id) !== -1) {
+            return NextResponse.json(conversation)
+        }
 
+        // Update seen  status of last message
         const updateMessage = await prismaClient.message.update({
             where: {
                 id: lastMessage.id
@@ -56,6 +61,14 @@ export async function POST(request: Request, { params }: { params: TParams }) {
                 }
             }
         });
+
+        // update realtime SEEN Status
+        await pusherServer.trigger(currentUser.email, 'conversation:update', {
+            id: conversation.id,
+            message: [updateMessage]
+        });
+
+        await pusherServer.trigger(conversationId!, "message:update", updateMessage)
 
         return NextResponse.json(updateMessage)
 
