@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import prismaClient from '@/libs/prismadb';
 import { getCurrentUser } from "@/app/actions";
+import { pusherServer } from "@/libs/pusher";
 
-
+/** 
+* @summary Api route for new conversation creation
+*  
+*/
 export async function POST(request: Request) {
     try {
         const currentUser = await getCurrentUser();
@@ -41,6 +45,12 @@ export async function POST(request: Request) {
                 // by default it's just an array of userId
                 include: {
                     users: true
+                }
+            });
+
+            newGroupConversation.users.forEach(user => {
+                if (user.email) {
+                    pusherServer.trigger(user.email, "conversation:new", newGroupConversation)
                 }
             });
 
@@ -89,6 +99,8 @@ export async function POST(request: Request) {
                 users: true
             }
         });
+
+        newConversation.users.map(user => pusherServer.trigger(user?.email!, 'conversation:new', newConversation))
 
         return NextResponse.json(newConversation);
 

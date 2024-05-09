@@ -7,7 +7,6 @@ type TParams = {
     conversationId?: string;
 }
 
-
 export async function POST(request: Request, { params }: { params: TParams }) {
     try {
         const currentUser = await getCurrentUser();
@@ -62,12 +61,13 @@ export async function POST(request: Request, { params }: { params: TParams }) {
             }
         });
 
-        // update realtime SEEN Status
+        // update realtime SEEN Status of the current User
         await pusherServer.trigger(currentUser.email, 'conversation:update', {
             id: conversation.id,
             message: [updateMessage]
         });
 
+        // update realtime "has new message" Status of the conversation
         await pusherServer.trigger(conversationId!, "message:update", updateMessage)
 
         return NextResponse.json(updateMessage)
