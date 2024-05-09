@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from '@/app/actions';
 import prismaClient from '@/libs/prismadb';
+import { pusherServer } from "@/libs/pusher";
 
 type TParams = {
     conversationId?: string
 }
+/**
+* @summary: api route to delete conversation by ID
+*/
+
 
 export async function DELETE(request: Request,
     { params }: { params: TParams }
@@ -38,6 +43,13 @@ export async function DELETE(request: Request,
                 userIds: {
                     hasSome: [currentUser.id]
                 }
+            }
+        })
+
+        // trigger all users in the current conversation the delete event
+        existingConversation.users.forEach(user => {
+            if (user.email) {
+                pusherServer.trigger(user.email, "conversation:remove", existingConversation)
             }
         })
 

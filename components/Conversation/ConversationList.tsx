@@ -48,13 +48,29 @@ const ConversationList: React.FC<ConversationListProps> = ({
       });
     }
 
+    function updateConversationHandler(
+      updatedConversation: FullConversationType
+    ) {
+      setConversations((currentConversations) =>
+        currentConversations.map((currentConversation) => {
+          if (currentConversation.id === updatedConversation.id) {
+            return updatedConversation;
+          }
+
+          return currentConversation;
+        })
+      );
+    }
+
     pusherClient.subscribe(pusherKey);
 
     pusherClient.bind('conversation:new', newConversationHandler);
+    pusherClient.bind('conversation:update', updateConversationHandler);
 
     return () => {
       pusherClient.unsubscribe(pusherKey);
       pusherClient.unbind('conversation:new', newConversationHandler);
+      pusherClient.unbind('conversation:update', updateConversationHandler);
     };
   });
 
