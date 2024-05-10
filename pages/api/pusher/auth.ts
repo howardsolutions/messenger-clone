@@ -4,6 +4,8 @@ import { getServerSession } from 'next-auth';
 import { pusherServer } from '@/libs/pusher';
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+// Pusher Authorize Channel for getting active users
+
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
     const session = await getServerSession(request, response, authOptions);
 
