@@ -7,9 +7,9 @@ function useOtherUser(conversation: FullConversationType | { users: User[] }) {
 
     const currentUserEmail = session?.data?.user?.email;
 
-    const otherUser = conversation.users.filter(user => user.email !== currentUserEmail);
+    const otherUser = conversation?.users?.filter(user => user.email !== currentUserEmail);
 
-    return otherUser[0];
+    return otherUser?.[0];
 }
 
 export default useOtherUser

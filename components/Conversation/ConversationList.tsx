@@ -54,7 +54,10 @@ const ConversationList: React.FC<ConversationListProps> = ({
       setConversations((currentConversations) =>
         currentConversations.map((currentConversation) => {
           if (currentConversation.id === updatedConversation.id) {
-            return updatedConversation;
+            return {
+              ...currentConversation,
+              messages: updatedConversation.messages,
+            };
           }
 
           return currentConversation;
