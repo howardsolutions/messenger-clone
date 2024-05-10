@@ -2,7 +2,7 @@
 
 import { Conversation, User } from '@prisma/client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { HiChevronLeft, HiEllipsisHorizontal } from 'react-icons/hi2';
 import { useOtherUser } from '@/hooks';
@@ -10,6 +10,7 @@ import AvatarGroup from '../AvatarGroup';
 import Avatar from '../Avatar';
 import ProfileDrawer from '../ProfileDrawer';
 import { getStatusText } from '@/utils';
+import useActiveList from '@/hooks/useActiveList';
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -21,10 +22,10 @@ const ConversationHeader: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useOtherUser(conversation);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  //   const { members } = useActiveList();
-  //   const isActive = members.indexOf(otherUser?.email!) !== -1;
+  const { members } = useActiveList();
+  const isActive = members.includes(otherUser?.email!);
 
-  const statusText = getStatusText(conversation, false);
+  const statusText = getStatusText(conversation, isActive);
 
   return (
     <>
@@ -76,7 +77,7 @@ const ConversationHeader: React.FC<HeaderProps> = ({ conversation }) => {
                 text-neutral-500
               '
             >
-              {/* {statusText} */}
+              {statusText}
             </div>
           </div>
         </div>
